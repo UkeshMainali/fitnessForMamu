@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="ne" data-lang="ne">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>आमाको स्वस्थ यात्रा</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --sage: #4A7C59;
+      --sage-light: #D4EAD9;
+      --sage-mid: #7FAF8C;
+      --earth: #8B5E3C;
+      --earth-light: #F5EDE4;
+      --warm-white: #FAFAF7;
+      --cream: #F2EDE4;
+      --text-dark: #1C1C1A;
+      --text-mid: #4A4843;
+      --text-muted: #7D7972;
+      --border: rgba(74, 124, 89, 0.15);
+      --border-warm: rgba(139, 94, 60, 0.12);
+      --warning: #C17F3C;
+      --warning-bg: #FEF6EC;
+      --pill-radius: 100px;
+      --card-radius: 16px;
+      --cook-bg: #F0F7F2;
+      --cook-border: rgba(74, 124, 89, 0.25);
+      /* Font scale: multiply every rem/px size by this */
+      --fs: 1;
+    }
+
+    /* Medium font size */
+    html[data-fs="md"] {
+      --fs: 1.2;
+    }
+
+    /* Large font size */
+    html[data-fs="lg"] {
+      --fs: 1.45;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--warm-white);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--sage);
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 0%, rgba(255, 255, 255, 0.07) 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(0, 0, 0, 0.12) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: calc(11px * var(--fs));
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--sage-light);
+      margin-bottom: 12px;
+    }
+
+    .hero h1 {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: clamp(calc(1.8rem * var(--fs)), 5vw, calc(3rem * var(--fs)));
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .hero-sub {
+      font-size: calc(14px * var(--fs));
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 2rem;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
+    }
+
+    .stat-pill {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 10px 20px;
+      border-radius: var(--pill-radius);
+      text-align: center;
+      min-width: 110px;
+    }
+
+    .stat-pill .val {
+      font-size: calc(20px * var(--fs));
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .stat-pill .lbl {
+      font-size: calc(11px * var(--fs));
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 2px;
+    }
+
+    /* LANG SWITCHER */
+    .lang-switcher {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--pill-radius);
+      padding: 3px;
+    }
+
+    .lang-btn {
+      padding: 6px 14px;
+      border-radius: var(--pill-radius);
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .lang-btn.active {
+      background: #fff;
+      color: var(--sage);
+    }
+
+    /* FONT SIZE SWITCHER */
+    .controls-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--pill-radius);
+      padding: 3px;
+    }
+
+    .fs-btn {
+      padding: 6px 12px;
+      border-radius: var(--pill-radius);
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1;
+    }
+
+    .fs-btn.active {
+      background: #fff;
+      color: var(--sage);
+    }
+
+    .fs-btn[data-fs="sm"] {
+      font-size: 12px;
+    }
+
+    .fs-btn[data-fs="md"] {
+      font-size: 15px;
+    }
+
+    .fs-btn[data-fs="lg"] {
+      font-size: 18px;
+    }
+
+    /* NOTICE */
+    .notice {
+      background: var(--warning-bg);
+      border-left: 3px solid var(--warning);
+      margin: 1.5rem auto;
+      max-width: 900px;
+      padding: 14px 20px;
+      border-radius: 0 10px 10px 0;
+      font-size: calc(13px * var(--fs));
+      color: var(--text-mid);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    /* NAV */
+    .main-nav {
+      display: flex;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+      border-bottom: 1.5px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .main-tab {
+      padding: 12px 24px;
+      font-size: calc(14px * var(--fs));
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2.5px solid transparent;
+      margin-bottom: -1.5px;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      transition: color .2s, border-color .2s;
+      white-space: nowrap;
+    }
+
+    .main-tab:hover {
+      color: var(--sage);
+    }
+
+    .main-tab.active {
+      color: var(--sage);
+      border-bottom-color: var(--sage);
+    }
+
+    /* LAYOUT */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem 4rem;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* DAY NAV */
+    .day-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .day-btn {
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--pill-radius);
+      background: #fff;
+      color: var(--text-mid);
+      font-size: calc(13px * var(--fs));
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .day-btn:hover {
+      border-color: var(--sage-mid);
+      color: var(--sage);
+    }
+
+    .day-btn.active {
+      background: var(--sage);
+      color: #fff;
+      border-color: var(--sage);
+    }
+
+    /* MEAL CARDS */
+    .day-panel {
+      display: none;
+    }
+
+    .day-panel.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .day-panel.active {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .meal-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+
+    .meal-card:hover {
+      box-shadow: 0 4px 20px rgba(74, 124, 89, 0.1);
+    }
+
+    .meal-time {
+      background: var(--sage-light);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meal-time-icon {
+      font-size: calc(18px * var(--fs));
+    }
+
+    .meal-time-label {
+      font-size: calc(11px * var(--fs));
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--sage);
+    }
+
+    .meal-time-clock {
+      font-family: 'DM Mono', monospace;
+      font-size: calc(10px * var(--fs));
+      color: var(--sage-mid);
+      margin-left: auto;
+    }
+
+    .meal-body {
+      padding: 14px 16px 0;
+    }
+
+    .meal-text {
+      font-size: calc(14px * var(--fs));
+      color: var(--text-dark);
+      line-height: 1.55;
+    }
+
+    .meal-cal {
+      margin-top: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: calc(11px * var(--fs));
+      color: var(--sage-mid);
+      background: var(--sage-light);
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 100px;
+    }
+
+    /* COOKING TIPS */
+    .cook-tips {
+      margin: 10px 0 0;
+      border-top: 1px dashed var(--cook-border);
+      padding: 10px 16px 14px;
+      background: var(--cook-bg);
+    }
+
+    .cook-tips-label {
+      font-size: calc(10px * var(--fs));
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--sage);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .cook-tip-item {
+      font-size: calc(12.5px * var(--fs));
+      color: var(--text-mid);
+      line-height: 1.55;
+      padding: 3px 0 3px 14px;
+      position: relative;
+    }
+
+    .cook-tip-item::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--sage-mid);
+      font-size: calc(11px * var(--fs));
+      top: 4px;
+    }
+
+    /* EXERCISE */
+    .ex-panel {
+      display: none;
+    }
+
+    .ex-panel.active {
+      display: block;
+    }
+
+    .ex-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ex-header h2 {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: calc(1.4rem * var(--fs));
+      font-weight: 400;
+      color: var(--text-dark);
+    }
+
+    .ex-type-badge {
+      padding: 5px 14px;
+      border-radius: var(--pill-radius);
+      font-size: calc(12px * var(--fs));
+      font-weight: 500;
+    }
+
+    .badge-active {
+      background: var(--sage-light);
+      color: var(--sage);
+    }
+
+    .badge-light {
+      background: #E8F4FF;
+      color: #2B6CB0;
+    }
+
+    .badge-rest {
+      background: var(--cream);
+      color: var(--text-muted);
+    }
+
+    .rest-note {
+      background: var(--cream);
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      font-size: calc(14px * var(--fs));
+      color: var(--text-mid);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .rest-emoji {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .ex-table-wrap {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+    }
+
+    .ex-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ex-table thead th {
+      background: var(--cream);
+      padding: 11px 16px;
+      text-align: left;
+      font-size: calc(11px * var(--fs));
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-warm);
+    }
+
+    .ex-table tbody tr:not(:last-child) td {
+      border-bottom: 1px solid rgba(74, 124, 89, 0.08);
+    }
+
+    .ex-table tbody td {
+      padding: 14px 16px;
+      font-size: calc(13.5px * var(--fs));
+      color: var(--text-dark);
+      vertical-align: top;
+    }
+
+    .ex-table tbody td:nth-child(2) {
+      font-family: 'DM Mono', monospace;
+      font-size: calc(12px * var(--fs));
+      color: var(--sage);
+      white-space: nowrap;
+    }
+
+    .ex-table tbody td:nth-child(3) {
+      font-size: calc(12.5px * var(--fs));
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .ex-table tbody td:nth-child(4) {
+      font-size: calc(11px * var(--fs));
+      white-space: nowrap;
+      padding: 10px 16px;
+      vertical-align: middle;
+    }
+
+    .ex-note {
+      background: var(--sage-light);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      font-size: calc(12px * var(--fs));
+      color: var(--sage);
+      line-height: 1.5;
+    }
+
+    .ex-demo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+      padding: 4px 11px 4px 9px;
+      background: var(--earth-light);
+      border: 1px solid var(--border-warm);
+      border-radius: var(--pill-radius);
+      font-size: calc(11px * var(--fs));
+      color: var(--earth);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all .15s;
+    }
+
+    .ex-demo-link:hover {
+      background: var(--earth);
+      color: #fff;
+      border-color: var(--earth);
+    }
+
+    .ex-demo-link-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    /* GUIDELINES */
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+    }
+
+    .tip-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 1.25rem;
+    }
+
+    .tip-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--sage-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .tip-icon.earth-bg {
+      background: var(--earth-light);
+    }
+
+    .tip-title {
+      font-size: calc(14px * var(--fs));
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .tip-text {
+      font-size: calc(13px * var(--fs));
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .avoid-item {
+      font-size: calc(12.5px * var(--fs));
+      color: #C0392B;
+      padding: 3px 0 3px 14px;
+      position: relative;
+    }
+
+    .avoid-item::before {
+      content: '×';
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: calc(10px * var(--fs));
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--sage-mid);
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: calc(1.6rem * var(--fs));
+      font-weight: 400;
+      color: var(--text-dark);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: calc(12px * var(--fs));
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 480px) {
+      .main-tab {
+        padding: 10px 14px;
+      }
+
+      .day-btn {
+        padding: 7px 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero">
+    <div class="controls-bar">
+      <button class="fs-btn active" data-fs="sm" onclick="setFs('sm')" title="Normal size">A</button>
+      <button class="fs-btn" data-fs="md" onclick="setFs('md')" title="Large size">A</button>
+      <button class="fs-btn" data-fs="lg" onclick="setFs('lg')" title="Extra large size">A</button>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" id="btn-ne" onclick="setLang('ne')">नेपाली</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+    <p class="hero-label" data-key="hero_label">स्वस्थ यात्रा — Wellness Journey</p>
+    <h1 data-key="hero_title">आमाको साप्ताहिक योजना</h1>
+    <p class="hero-sub" data-key="hero_sub">व्यक्तिगत साप्ताहिक योजना — खाना र हल्का व्यायाम</p>
+    <div class="stats-row">
+      <div class="stat-pill">
+        <div class="val">८० केजी</div>
+        <div class="lbl" data-key="stat_weight">हालको तौल</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val">~१४००</div>
+        <div class="lbl" data-key="stat_kcal">दैनिक क्यालोरी</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val">५</div>
+        <div class="lbl" data-key="stat_active">सक्रिय दिन/हप्ता</div>
+      </div>
+      <div class="stat-pill">
+        <div class="val">०.५–१ केजी</div>
+        <div class="lbl" data-key="stat_loss">सुरक्षित मासिक घटाव</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="notice">
+      <span style="font-size:16px;flex-shrink:0">⚠️</span>
+      <span data-key="notice_text"><strong>महत्त्वपूर्ण:</strong> यो योजना सुरु गर्नु अघि उहाँका डाक्टरसँग परामर्श
+        लिनुहोस् — विशेष गरी बाथ र कोलेस्ट्रोलको औषधि खाने समय र खाना-औषधिको सम्बन्धमा। यो योजना व्यावहारिक मार्गदर्शन
+        हो, चिकित्सकीय प्रिस्क्रिप्सन होइन।</span>
+    </div>
+
+    <nav class="main-nav">
+      <button class="main-tab active" onclick="switchTab('diet',this)" data-key="tab_diet">🥗 खाना योजना</button>
+      <button class="main-tab" onclick="switchTab('exercise',this)" data-key="tab_exercise">🚶 व्यायाम योजना</button>
+      <button class="main-tab" onclick="switchTab('guidelines',this)" data-key="tab_guidelines">📋 मुख्य
+        निर्देशिका</button>
+    </nav>
+
+    <!-- DIET SECTION -->
+    <div id="diet" class="section active">
+      <div class="section-header">
+        <p class="section-eyebrow" data-key="diet_eyebrow">साप्ताहिक खाना योजना</p>
+        <h2 class="section-title" data-key="diet_title">दैनिक खाना — हप्ताका हरेक दिन</h2>
+      </div>
+      <div class="day-nav" id="diet-day-nav"></div>
+      <div id="diet-panels"></div>
+    </div>
+
+    <!-- EXERCISE SECTION -->
+    <div id="exercise" class="section">
+      <div class="section-header">
+        <p class="section-eyebrow" data-key="ex_eyebrow">हल्का व्यायाम — जोर्नी-सुरक्षित</p>
+        <h2 class="section-title" data-key="ex_title">साप्ताहिक व्यायाम योजना</h2>
+      </div>
+      <div class="day-nav" id="ex-day-nav"></div>
+      <div id="ex-panels"></div>
+    </div>
+
+    <!-- GUIDELINES SECTION -->
+    <div id="guidelines" class="section">
+      <div class="section-header">
+        <p class="section-eyebrow" data-key="gl_eyebrow">आवश्यक नियमहरू</p>
+        <h2 class="section-title" data-key="gl_title">पालना गर्नुपर्ने मुख्य निर्देशिका</h2>
+      </div>
+      <div class="tips-grid" id="tips-grid"></div>
+    </div>
+  </div>
+
+  <footer><span data-key="footer_text">आमाको स्वास्थ्य यात्राको लागि मायाले बनाइएको 🌿 · खाना वा औषधिको समयमा परिवर्तन
+      गर्नु अघि सधैं डाक्टरसँग सल्लाह लिनुहोस्।</span></footer>
+
+  <script>
+    // ── TRANSLATIONS ──────────────────────────────────────────────────────────────
+    const T = {
+      ne: {
+        hero_label: 'स्वस्थ यात्रा — Wellness Journey',
+        hero_title: 'आमाको साप्ताहिक योजना',
+        hero_sub: 'व्यक्तिगत साप्ताहिक योजना — खाना र हल्का व्यायाम',
+        stat_weight: 'हालको तौल',
+        stat_kcal: 'दैनिक क्यालोरी',
+        stat_active: 'सक्रिय दिन/हप्ता',
+        stat_loss: 'सुरक्षित मासिक घटाव',
+        notice_text: '<strong>महत्त्वपूर्ण:</strong> यो योजना सुरु गर्नु अघि उहाँका डाक्टरसँग परामर्श लिनुहोस् — विशेष गरी बाथ र कोलेस्ट्रोलको औषधि खाने समय र खाना-औषधिको सम्बन्धमा। यो योजना व्यावहारिक मार्गदर्शन हो, चिकित्सकीय प्रिस्क्रिप्सन होइन।',
+        tab_diet: '🥗 खाना योजना',
+        tab_exercise: '🚶 व्यायाम योजना',
+        tab_guidelines: '📋 मुख्य निर्देशिका',
+        diet_eyebrow: 'साप्ताहिक खाना योजना',
+        diet_title: 'दैनिक खाना — हप्ताका हरेक दिन',
+        ex_eyebrow: 'हल्का व्यायाम — जोर्नी-सुरक्षित',
+        ex_title: 'साप्ताहिक व्यायाम योजना',
+        gl_eyebrow: 'आवश्यक नियमहरू',
+        gl_title: 'पालना गर्नुपर्ने मुख्य निर्देशिका',
+        footer_text: 'आमाको स्वास्थ्य यात्राको लागि मायाले बनाइएको 🌿 · खाना वा औषधिको समयमा परिवर्तन गर्नु अघि सधैं डाक्टरसँग सल्लाह लिनुहोस्।',
+        cook_label: '🍳 पकाउने तरिका',
+        days: ['सोमबार', 'मङ्गलबार', 'बुधबार', 'बिहीबार', 'शुक्रबार', 'शनिबार', 'आइतबार'],
+        badge_active: 'सक्रिय',
+        badge_light: 'हल्का सक्रिय',
+        badge_rest: 'आराम दिन',
+        ex_th: ['व्यायाम', 'सेट × रेप्स', 'नोट'],
+        ex_note_prefix: '💡',
+        meal_labels: ['🌅 बिहान उठ्ने बेला', '☀️ बिहानको खाना', '🕙 बिहानको खाजा', '🍛 दिउँसोको खाना', '🌤️ बेलुकाको खाजा', '🌙 राति खाना'],
+        meal_clocks: ['बिहान ६–७', 'बिहान ८', 'बिहान १०:३०', 'दिउँसो १', 'बेलुका ४', 'साँझ ७'],
+      },
+      en: {
+        hero_label: 'Wellness Journey',
+        hero_title: "Ama's Weekly Health Plan",
+        hero_sub: 'A personalised weekly plan — diet & gentle exercise',
+        stat_weight: 'Current weight',
+        stat_kcal: 'Daily kcal target',
+        stat_active: 'Active days/week',
+        stat_loss: 'Safe monthly loss',
+        notice_text: '<strong>Medical note:</strong> Please review this plan with her doctor before starting — especially regarding rheumatology and cholesterol medication timing, and any food-drug interactions. This plan is a practical framework, not a clinical prescription.',
+        tab_diet: '🥗 Diet Plan',
+        tab_exercise: '🚶 Exercise Plan',
+        tab_guidelines: '📋 Key Guidelines',
+        diet_eyebrow: 'Weekly meal plan',
+        diet_title: 'Daily diet — each day of the week',
+        ex_eyebrow: 'Gentle movement — joint-safe',
+        ex_title: 'Weekly exercise plan',
+        gl_eyebrow: 'Essential rules',
+        gl_title: 'Key guidelines to follow',
+        footer_text: "Designed with care for Ama's health journey 🌿 · Always consult her doctor before making changes to diet or medication timing.",
+        cook_label: '🍳 Cooking tips',
+        days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        badge_active: 'Active',
+        badge_light: 'Light active',
+        badge_rest: 'Rest day',
+        ex_th: ['Exercise', 'Sets × Reps', 'Notes'],
+        ex_note_prefix: '💡',
+        meal_labels: ['🌅 Early morning', '☀️ Breakfast', '🕙 Mid-morning snack', '🍛 Lunch', '🌤️ Evening snack', '🌙 Dinner'],
+        meal_clocks: ['6–7 am', '8 am', '10:30 am', '1 pm', '4 pm', '7 pm'],
+      }
+    };
+
+    // ── DIET DATA ─────────────────────────────────────────────────────────────────
+    // Each day: array of 6 meals. Each meal: {ne, en, cal?, cook_ne, cook_en}
+    const DIET = [
+      // MONDAY
+      [
+        {
+          ne: 'तातो पानीमा भिजाएको मेथी दाना (राति भिजाएको) + ४ वटा भिजाएको बदाम',
+          en: 'Warm water with soaked methi seeds (soaked overnight) + 4 soaked almonds',
+          cook_ne: ['मेथी दाना रातभर सफा पानीमा भिजाएर राख्नुहोस् र बिहान उठेपछि पानीसहित पिउनुहोस् — छान्नु पर्दैन।', 'बदाम रातभर भिजाएर बोक्रा फुकालेर खानुहोस् — खाली पेट राम्रो।'],
+          cook_en: ['Soak methi seeds overnight in clean water. Drink the whole glass in the morning including the seeds — no need to strain.', 'Soak almonds overnight, peel the skin in the morning and eat them raw on an empty stomach.']
+        },
+        {
+          ne: 'चिउरा ३० ग्राम + कम चिल्लो दही १०० ग्राम + काँक्रो र गाजर काटेको',
+          en: 'Chiura (beaten rice) 30g + low-fat curd 100g + sliced cucumber & carrot sticks',
+          cal: '~२५० क्यालोरी / ~250 kcal',
+          cook_ne: ['चिउरा तेलमा भुट्नु पर्दैन — सोझै दहीमा मिसाउनुहोस्।', 'दही घरको बनाएको छ भने माथिको क्रिम (सर) हटाएर प्रयोग गर्नुहोस्।', 'काँक्रो र गाजर नुन नहाली काँचै खानुहोस्।'],
+          cook_en: ['Do not fry chiura in oil — mix it directly into the curd.', 'If using homemade curd, skim off the cream layer on top before eating.', 'Eat cucumber and carrot raw without adding salt.']
+        },
+        {
+          ne: '१ गिलास तातो स्किम दूध + थोरै उसिनेको सुकेको चना (तेल नहाली)',
+          en: '1 glass warm skim milk + small bowl dry chickpeas (boiled, no oil)',
+          cook_ne: ['चना राति भिजाएर बिहान कुकरमा उसिन्नुहोस् — तेल, घ्यू केही नहाल्नुस्।', 'नुन कम हाल्नुहोस् वा नहाल्नुस् — आफ्नो स्वादअनुसार।', 'दूध उमालेर पिउनुस् तर क्रिम नछुट्ट्याउने होइन — स्किम दूध नै किन्नुस्।'],
+          cook_en: ['Soak chickpeas overnight, pressure cook in the morning — no oil, no ghee at all.', 'Use minimal salt or no salt — adjust to taste.', 'Buy skim milk directly rather than trying to skim cream from regular milk.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम (पकाएको) + मसुरको दाल (तेल नहाली भाप पकाएको) + पालुङ्गोको तरकारी (उसिनेको) + काँक्रोको स्लाइस',
+          en: 'Brown rice 80g (cooked) + masoor dal — oil-free, steam-cooked + spinach sabzi (boiled) + cucumber slices',
+          cal: '~४०० क्यालोरी / ~400 kcal',
+          cook_ne: ['दाल पकाउँदा तेल-घ्यू को साटो अदुवा र लसुन सिधै कुकरमा हाल्नुहोस् — सुगन्ध आउँछ, झोल स्वादिलो हुन्छ।', 'पालुङ्गो उसिनेर निचोरेर पकाउनुस् — नन-स्टिक भाँडोमा प्याज र अदुवा तेल नहाली सुकाएर (dry roast) भुन्नुहोस् र पालुङ्गो मिसाउनुस्।', 'राइस मापेर पकाउनुस् — ८० ग्राम सुखा अन्न एक मुठ्ठी बराबर हुन्छ।'],
+          cook_en: ['Instead of oil tempering (tadka), add ginger and garlic directly into the pressure cooker with the dal — gives flavour without oil.', 'For spinach: boil and squeeze out water, then dry-roast onion and ginger on a non-stick pan without oil until softened, then mix in spinach.', 'Measure rice — 80g dry rice is roughly one tight fist.']
+        },
+        {
+          ne: 'भुटेको सोया चन्क्स ३० ग्राम (तेल नहाली ड्राई रोस्ट गरेको) + चिनी नहालेको हर्बल चिया',
+          en: 'Roasted soya chunks 30g (dry-roasted, no oil) + herbal tea without sugar',
+          cook_ne: ['सोया चन्क्स तातो पानीमा ५ मिनेट भिजाएर निचोर्नुहोस् — पछि नन-स्टिक भाँडोमा नुन र मसला मात्र हालेर तेल नहाली ड्राई रोस्ट गर्नुहोस्।', 'चियामा चिनी नहाल्नुस् — अदुवा थप्नुहोस्, स्वाद राम्रो आउँछ।'],
+          cook_en: ['Soak soya chunks in hot water for 5 min then squeeze out moisture — dry-roast on a non-stick pan with just salt and spices, no oil at all.', 'Skip sugar in tea — add ginger for natural flavour instead.']
+        },
+        {
+          ne: '२ सानो कोदोको रोटी + टोफु भुर्जी (ड्राई प्यान, तेल नहाली) + उसिनेको फर्सीको तरकारी + लौकाको सफा झोल',
+          en: '2 small millet rotis + tofu bhurji (dry pan, no oil) + boiled pumpkin sabzi + lauki soup (clear, no cream)',
+          cal: '~३८० क्यालोरी / ~380 kcal',
+          cook_ne: ['टोफु भुर्जी: टोफु भाँचेर नन-स्टिक भाँडोमा तेल नहाली सिधै भुन्नुहोस् — प्याज, हरियो खुर्सानी, अदुवा पहिले ड्राई रोस्ट गर्नुहोस् र टोफु मिसाउनुहोस्।', 'फर्सी: उसिनेर मात्र दिनुहोस् वा नन-स्टिकमा सिधै भाप दिनुहोस् — तेल नहाल्नुस्।', 'लौकाको झोल: लौका उसिनेर खुर्सानी र अदुवा थपेर मात्र पिउन दिनुस् — क्रिम वा दूध नहाल्नुस्।', 'कोदोको रोटी पातलो बनाउनुस् — बाक्लो बनाउँदा क्यालोरी बढ्छ।'],
+          cook_en: ['Tofu bhurji: crumble tofu, dry-roast onion, green chili, and ginger on a non-stick pan without oil until they soften, then add crumbled tofu and stir.', 'Pumpkin: steam or boil only — no oil at all.', 'Lauki soup: boil lauki with ginger and chili, serve as a thin broth — no cream, no milk.', 'Make thin rotis — thick ones add unnecessary calories.']
+        }
+      ],
+      // TUESDAY
+      [
+        {
+          ne: 'तातो पानी + राति भिजाएको १ चम्चा चिया बिउ (chia seeds)',
+          en: 'Warm water + 1 tsp chia seeds soaked overnight in water',
+          cook_ne: ['चिया बिउ रातभर पानीमा भिजाउनुहोस् — बिहान जेली जस्तो हुन्छ, त्यसरी नै पिउनुहोस्।'],
+          cook_en: ['Soak chia seeds overnight in a glass of water — they turn gel-like by morning. Drink the whole glass as is.']
+        },
+        {
+          ne: 'कोदोको ढिँडो (चिनी नहाली, अलिकति हल्दी हालेर) + पनिर ५० ग्राम उसिनेको/ग्रिल गरेको (तेल नहाली)',
+          en: 'Millet (kodo) porridge — no sugar, pinch of turmeric + paneer 50g boiled/grilled (no oil)',
+          cal: '~२४० क्यालोरी / ~240 kcal',
+          cook_ne: ['कोदो पानीमा उमालेर ढिँडो बनाउनुस् — चिनी नहाल्नुस्, अलि हल्दी हाल्नुस्, स्वाद राम्रो आउँछ।', 'पनिर उसिनेर दिनुस् — वा नन-स्टिक प्यानमा तेल नहाली दुवैतिर खैरो हुन्जेल ग्रिल गर्नुस्। तेल हाल्नुपर्दैन, आफ्नो चिल्लोपन पनिरमै हुन्छ।'],
+          cook_en: ['Cook kodo millet in water to make porridge — no sugar, add a pinch of turmeric for flavour and anti-inflammation.', 'For paneer: either boil it or grill directly on a dry non-stick pan without any oil — paneer has enough natural fat to prevent sticking.']
+        },
+        {
+          ne: 'पातलो मोही (छाछ) १ गिलास — नुन र चिनी नहाली, थोरै जिरा भुटेर हाल्न सकिन्छ',
+          en: 'Thin buttermilk (chaas) 1 glass — no salt, no sugar, a little roasted cumin optional',
+          cook_ne: ['दहीलाई धेरै पानीमा मिसाएर पातलो बनाउनुस् — घर्यामा बढी दही नहाल्नुस्।', 'चिनी वा नुन नहाल्नुस् — जिरा ड्राई रोस्ट गरेर थिच्नुस् र थप्नुस्।'],
+          cook_en: ['Whisk curd with plenty of water to make it thin — do not use a thick ratio.', 'No salt or sugar — dry-roast cumin seeds, crush lightly and add for flavour.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + चनाको दाल (तेल नहाली) + घिरौंला तरकारी (भाप पकाएको) + मूलाको स्लाइस',
+          en: 'Brown rice 80g + chana dal (oil-free) + sponge gourd sabzi (steamed) + radish slices + a small piece of garlic',
+          cal: '~३९० क्यालोरी / ~390 kcal',
+          cook_ne: ['चनाको दाल कुकरमा अदुवा, लसुन र हल्दी हालेर पकाउनुस् — तेलको साटो यिनले नै स्वाद दिन्छन्।', 'घिरौंला: भाप दिनुस् वा नन-स्टिकमा थोरै पानी हालेर ढकनी लगाएर पकाउनुस् — तेल बिल्कुल नहाल्नुस्।', 'मूला काँचै खानुस् — पाचन राम्रो गर्छ।'],
+          cook_en: ['Cook chana dal in a pressure cooker with ginger, garlic, and turmeric — these provide full flavour without any oil.', 'Sponge gourd: steam it or cook covered on a non-stick pan with just a splash of water — no oil at all.', 'Eat radish raw — aids digestion.']
+        },
+        {
+          ne: 'उसिनेको सुकेको राजमा १ सानो कचौरा + हरियो खुर्सानी + हर्बल चिया',
+          en: 'Boiled dry rajma 1 small bowl + green chili + herbal tea',
+          cook_ne: ['राजमा राति भिजाएर बिहान कुकरमा पकाउनुस् — तेल, घ्यू, मसला केही नहाल्नुस् — यो स्न्याक्स हो, तरकारी होइन।', 'हरियो खुर्सानी काँचै खानुस्।'],
+          cook_en: ['Soak rajma overnight, pressure cook in the morning — no oil, no ghee, no masala. This is a plain protein snack, not a curry.', 'Eat green chili raw alongside.']
+        },
+        {
+          ne: '२ सानो गहुँको रोटी + बोडीको तरकारी (भाप पकाएको, तेल नहाली) + फर्सीको डाँठको तरकारी + सफा तरकारीको झोल',
+          en: '2 small wheat rotis + bodi curry (steamed, no oil) + pumpkin stem sabzi + clear vegetable broth',
+          cal: '~३७० क्यालोरी / ~370 kcal',
+          cook_ne: ['बोडी: भाप दिनुस् वा नन-स्टिकमा प्याज, अदुवा र बोडी थोरै पानीले ड्राई भुन्नुस् — तेल नहाल्नुस्।', 'फर्सीको डाँठ: साफ गरेर टुक्रा पारी थोरै पानी र मसला हालेर ढकनी लगाएर पकाउनुस्।', 'झोल: गाजर, काँक्रो, प्याज उसिनेर छान्नुस् — त्यो पानी नै झोल हो, क्रिम नहाल्नुस्।'],
+          cook_en: ['Bodi: steam it or dry-cook on a non-stick pan with onion, ginger and a splash of water — no oil.', 'Pumpkin stem: clean and chop, cook covered with a little water and spices.', 'Broth: boil carrot, onion, and ginger then strain — serve just the liquid, no cream.']
+        }
+      ],
+      // WEDNESDAY
+      [
+        {
+          ne: 'तातो पानी + मेथी दानाको पानी (राति भिजाएको)',
+          en: 'Warm water + methi seeds water (soaked overnight)',
+          cook_ne: ['मेथी दाना रातभर पानीमा भिजाउनुहोस् र बिहान पानीसहित पिउनुहोस्।'],
+          cook_en: ['Soak methi seeds overnight and drink with the water in the morning — do not strain.']
+        },
+        {
+          ne: 'चिउरा २५ ग्राम + पनिर ६० ग्राम उसिनेको (तेल नहाली) + काँक्रो र काँचो गाजर',
+          en: 'Chiura 25g + paneer 60g (boiled, no oil) + sliced cucumber & raw carrot',
+          cal: '~२६० क्यालोरी / ~260 kcal',
+          cook_ne: ['पनिर उसिनेर दिनुस् — वा नन-स्टिक प्यानमा तेल नहाली खैरो पार्नुस्।', 'चिउरा तेलमा नभुटी सोझै पनिर र तरकारीसँग मिसाएर खानुस्।'],
+          cook_en: ['Boil paneer or grill on a dry non-stick pan until lightly golden — no oil needed.', 'Do not fry chiura — mix it directly with the paneer and vegetables and eat.']
+        },
+        {
+          ne: 'स्किम दूध १ कप (तातो) + १ सानो स्याउ वा नासपाती (खट्टा फल नखानुस्)',
+          en: 'Skim milk 1 cup (warm) + 1 small apple or pear (avoid citrus)',
+          cook_ne: ['दूध उमालेर तातो पिउनुस् — चिनी नहाल्नुस्।', 'फल काँचै खानुस् — जुस बनाउनु हुँदैन, फाइबर नष्ट हुन्छ।'],
+          cook_en: ['Heat skim milk and drink warm — no sugar.', 'Eat the fruit whole — do not juice it, as juicing removes the fibre.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + च्याउ-टोफु तरकारी (ड्राई, नन-स्टिक, तेल नहाली) + पालुङ्गोको दाल (पातलो, तेल नहाली) + चुकन्दर सलाद',
+          en: 'Brown rice 80g + mushroom-tofu sabzi (dry, non-stick pan, no oil) + spinach dal (thin, oil-free) + beetroot salad',
+          cal: '~४१० क्यालोरी / ~410 kcal',
+          cook_ne: ['च्याउ-टोफु: नन-स्टिक भाँडोमा तेल नहाली प्याज, अदुवा, हरियो खुर्सानी पहिले ड्राई रोस्ट गर्नुस् — थोरै पानी छर्केर नरम पार्नुस् — च्याउ र टोफु थप्नुस् र भुन्नुस्।', 'चुकन्दर उसिनेर वा काँचै मिहिन काटेर दिनुस् — ड्रेसिङ नहाल्नुस्, नुन मात्र थोरै।'],
+          cook_en: ['Mushroom-tofu: dry-roast onion, ginger, chili on non-stick pan without oil — splash a little water to soften — add mushroom and tofu and stir-fry dry.', 'Beetroot: boil and slice or grate raw — no dressing, just a pinch of salt.']
+        },
+        {
+          ne: 'एयर-रोस्टेड सुकेको चना ३० ग्राम (तेल नहाली) + हर्बल चिया',
+          en: 'Air-roasted dry chickpeas 30g (no oil) + herbal tea',
+          cook_ne: ['चना कढाईमा तेल नहाली राम्रोसँग भुन्नुस् — निरन्तर हलाउनुस् ताकि जलोस् नहोस्।', 'तेल नहाल्नुस् — अलिकति नुन मात्र हाल्नुस्।'],
+          cook_en: ['Roast chickpeas in a dry pan (no oil) over medium heat, stirring constantly so they do not burn.', 'No oil at all — just a tiny pinch of salt.']
+        },
+        {
+          ne: '१ मकैको रोटी + १ गहुँको रोटी + भिण्डीको तरकारी (ड्राई, तेल नहाली) + पातलो दाल + कम चिल्लो दही ५० ग्राम',
+          en: '1 maize roti + 1 wheat roti + lady finger sabzi (dry, no oil) + thin dal + low-fat curd 50g',
+          cal: '~३६० क्यालोरी / ~360 kcal',
+          cook_ne: ['भिण्डी: पहिले सुकाएर काट्नुस् — पानी लागेको भिण्डी नन-स्टिकमा लेस बन्छ। नन-स्टिकमा तेल नहाली ड्राई भुन्नुस् — ढकनी लगाएर बाफमा पकाउनुस्।', 'दही माथिको क्रिम हटाएर मात्र दिनुस्।'],
+          cook_en: ['Lady finger: dry it thoroughly before chopping — wet okra becomes slimy. Dry-roast on non-stick without oil, then cover and let steam cook it through.', 'Skim cream off homemade curd before serving.']
+        }
+      ],
+      // THURSDAY
+      [
+        {
+          ne: 'तातो पानी + राति भिजाएको चिया बिउ (chia seeds)',
+          en: 'Warm water + 1 tsp chia seeds soaked overnight in water',
+          cook_ne: ['चिया बिउ रातभर पानीमा भिजाउनुस् — बिहान जेली जस्तो हुन्छ, पानीसहित पिउनुस्।'],
+          cook_en: ['Soak chia seeds overnight. Drink the whole glass including the gel in the morning.']
+        },
+        {
+          ne: 'कोदोको ढिँडो + ४ वटा भिजाएको बदाम + कम चिल्लो दही ८० ग्राम',
+          en: 'Millet porridge + 4 soaked almonds + low-fat curd 80g',
+          cal: '~२५० क्यालोरी / ~250 kcal',
+          cook_ne: ['कोदो पानीमा उमालेर पकाउनुस् — चिनी वा घ्यू नहाल्नुस्।', 'दहीमा क्रिम छैन भने दिनुस्, छ भने माथिको तह हटाउनुस्।'],
+          cook_en: ['Boil kodo millet in water to make porridge — no sugar, no ghee at all.', 'Check the curd — skim off cream layer if present before serving.']
+        },
+        {
+          ne: 'सफा तरकारीको झोल — गाजर, क्याप्सिकम, मूला — तेल र क्रिम नहाली, अलि अदुवा',
+          en: 'Clear vegetable soup — carrot, capsicum, radish — no oil, no cream, light ginger',
+          cook_ne: ['तरकारी उसिनेर छान्नुस् — त्यो पानी नै सूप हो।', 'तेल, घ्यू, क्रिम केही नहाल्नुस् — अदुवाको टुक्रा हाल्नुस्, स्वाद राम्रो आउँछ।', 'नुन कम हाल्नुस्।'],
+          cook_en: ['Boil vegetables and strain — the liquid is the soup.', 'No oil, no ghee, no cream — add a piece of fresh ginger for flavour.', 'Minimal salt.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + हरियो राजमा करी (कुकरमा पकाएको, तेल नहाली) + उसिनेको आलु सानो १ वटा + काँक्रो',
+          en: 'Brown rice 80g + green rajma curry (pressure-cooked, no oil) + boiled potato small 1 (occasional treat) + cucumber',
+          cal: '~४२० क्यालोरी / ~420 kcal',
+          cook_ne: ['राजमा करी: कुकरमा टमाटर नहाली — प्याज, अदुवा, लसुन, जिरा, हल्दी सँगै कुकरमा हाल्नुस् — तेल नहाल्नुस्। मसला र पानीले नै स्वाद दिन्छ।', 'आलु उसिनेर काँचै खानुस् वा नन-स्टिकमा ड्राई रोस्ट गर्नुस् — तेलमा नभुट्नुस्।'],
+          cook_en: ['Rajma curry: pressure cook with onion, ginger, garlic, cumin, turmeric — no tomato, no oil. The spices and water provide full flavour.', 'Boil potato and eat plain, or dry-roast on non-stick — do not fry in oil.']
+        },
+        {
+          ne: 'भुटेको सोया चन्क्स ३० ग्राम + अदुवा हर्बल चिया (चिनी नहाली)',
+          en: 'Roasted soya chunks 30g + ginger herbal tea (no sugar)',
+          cook_ne: ['सोया चन्क्स तातो पानीमा भिजाएर निचोर्नुस् — नन-स्टिकमा तेल नहाली मसला हालेर ड्राई रोस्ट गर्नुस्।'],
+          cook_en: ['Soak soya chunks in hot water, squeeze dry — dry-roast on non-stick pan with spices only, no oil.']
+        },
+        {
+          ne: '२ सानो गहुँको रोटी + फर्सीको तरकारी (भाप पकाएको) + टोफु स्टर-फ्राई (नन-स्टिक, तेल नहाली) + पातलो छाछ',
+          en: '2 small wheat rotis + pumpkin sabzi (steamed) + tofu stir-fry (non-stick, no oil) + thin chaas',
+          cal: '~३६० क्यालोरी / ~360 kcal',
+          cook_ne: ['फर्सी भाप दिनुस् — नन-स्टिकमा थोरै पानी र ढकनी लगाएर पकाउन सकिन्छ।', 'टोफु स्टर-फ्राई: टोफु काटेर नन-स्टिकमा अदुवा, लसुन पातासहित ड्राई भुन्नुस् — पानी थोरै छर्केर नरम पार्नुस्।'],
+          cook_en: ['Steam pumpkin — cook on non-stick covered with a splash of water.', 'Tofu stir-fry: chop tofu and dry-fry on non-stick with ginger and garlic leaf — splash a little water to prevent sticking.']
+        }
+      ],
+      // FRIDAY
+      [
+        {
+          ne: 'तातो पानी + मेथी दानाको पानी (राति भिजाएको)',
+          en: 'Warm water + methi seeds water (soaked overnight)',
+          cook_ne: ['मेथी दाना रातभर पानीमा राखेर बिहान पानीसहित पिउनुस्।'],
+          cook_en: ['Soak methi seeds overnight. Drink with the water in the morning.']
+        },
+        {
+          ne: 'चिउरा ३० ग्राम + तातो स्किम दूध १५० मिली + काटेको गाजर र काँक्रो',
+          en: 'Chiura 30g + warm skim milk 150ml + chopped carrot & cucumber',
+          cal: '~२४० क्यालोरी / ~240 kcal',
+          cook_ne: ['चिउरा दूधमा मिसाएर खानुस् — तेल नहाल्नुस्।', 'दूध गरम गर्नुस् तर उमाल्दा धेरै उमाल्नुस् नहोस् — पोषण नष्ट हुन्छ।'],
+          cook_en: ['Mix chiura into warm skim milk — no oil at all.', 'Warm the milk gently — do not over-boil.']
+        },
+        {
+          ne: 'पातलो छाछ + ४ वटा भिजाएको बदाम',
+          en: 'Thin buttermilk (chaas) + 4 soaked almonds',
+          cook_ne: ['दही पानीमा राम्रोसँग फेट्नुस् — पातलो बनाउनुस्, चिनी र नुन नहाल्नुस्।'],
+          cook_en: ['Whisk curd with plenty of water until thin — no sugar, no salt.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + मसुरको दाल (तेल नहाली) + तामाको साग (उसिनेको/भापमा पकाएको) + मूला र काँक्रो सलाद',
+          en: 'Brown rice 80g + masoor dal (oil-free) + asparagus boiled/steamed + radish & cucumber salad',
+          cal: '~३९० क्यालोरी / ~390 kcal',
+          cook_ne: ['दाल कुकरमा अदुवा, लसुन, हल्दी हालेर तेल नहाली पकाउनुस्।', 'तामा साग उसिनेर वा भाप दिनुस् — नुन मात्र थोरै, तेल नहाल्नुस्।', 'सलादमा नुन र खुर्सानी मात्र — तेल र मसाला नहाल्नुस्।'],
+          cook_en: ['Cook masoor dal in pressure cooker with ginger, garlic, turmeric — no oil.', 'Steam or boil asparagus — minimal salt, no oil.', 'Salad with just a pinch of salt and chili — no oil or dressing.']
+        },
+        {
+          ne: 'उसिनेको सुकेको राजमा वा चना ३० ग्राम + हर्बल चिया',
+          en: 'Boiled dry rajma or chickpeas 30g + herbal tea',
+          cook_ne: ['राति भिजाएर बिहान कुकरमा पकाउनुस् — मसाला, तेल नहाल्नुस्।'],
+          cook_en: ['Soak overnight, pressure cook in the morning — plain, no masala, no oil.']
+        },
+        {
+          ne: '२ कोदोको रोटी + सिमीको तरकारी (भाप पकाएको, तेल नहाली) + स्कुसको डाँठको तरकारी + सफा तरकारी झोल',
+          en: '2 millet rotis + beans curry (steamed, no oil) + skus stem sabzi + clear broth soup',
+          cal: '~३७० क्यालोरी / ~370 kcal',
+          cook_ne: ['सिमी: उसिनेर नन-स्टिकमा प्याज, अदुवा ड्राई रोस्ट गरी मिसाउनुस् — तेल नहाल्नुस्।', 'स्कुसको डाँठ: साफ गरी टुक्रा पारी थोरै पानी र मसला हालेर ढकनी लगाएर पकाउनुस् — तेल नहाल्नुस्।'],
+          cook_en: ['Beans: boil then mix with onion and ginger dry-roasted on a non-stick pan — no oil.', 'Skus stem: clean and chop, cook covered with a little water and spices — no oil.']
+        }
+      ],
+      // SATURDAY
+      [
+        {
+          ne: 'तातो पानी + राति भिजाएको चिया बिउ',
+          en: 'Warm water + 1 tsp chia seeds soaked overnight',
+          cook_ne: ['चिया बिउ रातभर पानीमा भिजाउनुस् — बिहान पानीसहित पिउनुस्।'],
+          cook_en: ['Soak chia seeds overnight and drink the whole glass in the morning.']
+        },
+        {
+          ne: 'कोदो-गहुँ मिश्रित ढिँडो + पनिर ५० ग्राम उसिनेको + काँक्रोको स्लाइस',
+          en: 'Millet-wheat mix porridge + paneer 50g (boiled) + cucumber slices',
+          cal: '~२६० क्यालोरी / ~260 kcal',
+          cook_ne: ['कोदो र गहुँको पिठो मिसाएर पानीमा उमालेर पकाउनुस् — चिनी, घ्यू नहाल्नुस्।', 'पनिर उसिनेर दिनुस्।'],
+          cook_en: ['Mix kodo and wheat flour together, cook in boiling water to make porridge — no sugar, no ghee.', 'Boil paneer and serve plain.']
+        },
+        {
+          ne: 'स्किम दूध १ कप + १ सानो स्याउ वा नासपाती (खट्टा फल नखानुस्)',
+          en: 'Skim milk 1 cup + 1 small apple or pear (no citrus fruits)',
+          cook_ne: ['दूध गरम गरेर पिउनुस् — चिनी नहाल्नुस्।'],
+          cook_en: ['Warm the milk gently and drink — no sugar.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + बोडी र च्याउको तरकारी (तेल नहाली) + पालुङ्गोको दाल (पातलो) + चुकन्दर सलाद',
+          en: 'Brown rice 80g + bodi & mushroom sabzi (no oil) + spinach dal (thin) + beetroot salad',
+          cal: '~४०० क्यालोरी / ~400 kcal',
+          cook_ne: ['बोडी-च्याउ: नन-स्टिकमा प्याज र अदुवा पानी छरकेर ड्राई भुन्नुस् — बोडी र च्याउ थप्नुस् — ढकनी लगाएर पकाउनुस् — तेल नहाल्नुस्।', 'चुकन्दर उसिनेर काट्नुस् वा काँचै मिहिन काट्नुस् — नुन मात्र थोरै।'],
+          cook_en: ['Bodi-mushroom: dry-fry onion and ginger on non-stick with a splash of water — add bodi and mushroom, cover and let steam — no oil.', 'Beetroot: boil and slice, or grate raw — minimal salt only.']
+        },
+        {
+          ne: 'एयर-रोस्टेड चना ३० ग्राम (तेल नहाली) + हर्बल चिया',
+          en: 'Air-roasted dry chickpeas 30g (no oil) + herbal chiya',
+          cook_ne: ['कढाईमा तेल नहाली चना भुन्नुस् — निरन्तर हलाउनुस् ताकि जलोस् नहोस्।'],
+          cook_en: ['Roast chickpeas in a dry pan without oil — stir constantly to avoid burning.']
+        },
+        {
+          ne: '२ गहुँको रोटी + टोफु-क्याप्सिकम ड्राई तरकारी (नन-स्टिक, तेल नहाली) + पातलो छाछ + फर्सीको सफा झोल',
+          en: '2 wheat rotis + tofu-capsicum dry sabzi (non-stick, no oil) + thin chaas + pumpkin clear soup',
+          cal: '~३७० क्यालोरी / ~370 kcal',
+          cook_ne: ['टोफु-क्याप्सिकम: नन-स्टिकमा क्याप्सिकम र प्याज ड्राई रोस्ट गर्नुस् — थोरै पानी छरकेर नरम पार्नुस् — टोफु थप्नुस् — तेल नहाल्नुस्।', 'फर्सीको झोल: फर्सी उसिनेर पानीमा अदुवा थपेर उम्लाउनुस् — क्रिम नहाल्नुस्।'],
+          cook_en: ['Tofu-capsicum: dry-roast capsicum and onion on non-stick with a water splash — add tofu and toss — no oil.', 'Pumpkin soup: boil pumpkin and serve the broth with ginger — no cream.']
+        }
+      ],
+      // SUNDAY
+      [
+        {
+          ne: 'तातो पानी + मेथी दानाको पानी',
+          en: 'Warm water + methi seeds water',
+          cook_ne: ['मेथी दाना रातभर भिजाएर बिहान पानीसहित पिउनुस्।'],
+          cook_en: ['Soak methi seeds overnight and drink with the water in the morning.']
+        },
+        {
+          ne: 'चिउरा २५ ग्राम + कम चिल्लो दही १०० ग्राम + ४ भिजाएका बदाम + गाजर स्टिक',
+          en: 'Chiura 25g + low-fat curd 100g + 4 soaked almonds + carrot sticks',
+          cal: '~२५० क्यालोरी / ~250 kcal',
+          cook_ne: ['चिउरा तेलमा नभुटी दहीमा सोझै मिसाउनुस्।', 'दहीमा क्रिम छ भने हटाउनुस्।'],
+          cook_en: ['Mix chiura directly into curd — do not fry in oil.', 'Skim cream from curd if present.']
+        },
+        {
+          ne: 'सफा तरकारीको झोल — तेल र क्रिम नहाली — गाजर, क्याप्सिकम, प्याज',
+          en: 'Clear vegetable soup — no cream, no oil — carrot, capsicum, onion broth',
+          cook_ne: ['तरकारी उसिनेर छान्नुस् — झोल नै पिउनुस्। तेल, घ्यू, क्रिम नहाल्नुस्।'],
+          cook_en: ['Boil vegetables and strain — drink just the broth. No oil, no ghee, no cream.']
+        },
+        {
+          ne: 'ब्राउन राइस ८० ग्राम + हरियो राजमा (तेल नहाली, कुकरमा) + घिरौंलाको तरकारी + काँक्रो सलाद',
+          en: 'Brown rice 80g + green rajma (no oil, pressure-cooked) + sponge gourd sabzi + cucumber salad',
+          cal: '~४०० क्यालोरी / ~400 kcal',
+          cook_ne: ['राजमा: कुकरमा प्याज, अदुवा, लसुन, जिरा, हल्दी हालेर तेल नहाली पकाउनुस्।', 'घिरौंला: नन-स्टिकमा तेल नहाली ड्राई भुन्नुस् वा भाप दिनुस्।'],
+          cook_en: ['Rajma: pressure cook with onion, ginger, garlic, cumin, turmeric — no oil.', 'Sponge gourd: dry-cook on non-stick or steam — no oil.']
+        },
+        {
+          ne: 'भुटेको सोया चन्क्स + अदुवाको हर्बल चिया (चिनी नहाली)',
+          en: 'Roasted soya chunks + ginger herbal chiya (no sugar)',
+          cook_ne: ['सोया चन्क्स भिजाएर निचोर्नुस् — नन-स्टिकमा तेल नहाली ड्राई रोस्ट गर्नुस्।'],
+          cook_en: ['Soak soya chunks, squeeze dry — dry-roast on non-stick without oil.']
+        },
+        {
+          ne: '१ कोदोको रोटी + १ मकैको रोटी + भिण्डीको तरकारी (ड्राई, तेल नहाली) + पनिरको तरकारी (ड्राई) + पातलो दाल',
+          en: '1 millet roti + 1 maize roti + ladyfinger sabzi (dry, no oil) + paneer sabzi (dry) + thin dal',
+          cal: '~३७० क्यालोरी / ~370 kcal',
+          cook_ne: ['भिण्डी सुखाएर काट्नुस् — नन-स्टिकमा तेल नहाली ड्राई भुन्नुस्, ढकनी लगाउनुस्।', 'पनिर तरकारी: पनिर काटेर नन-स्टिकमा खैरो पार्नुस् — प्याज, अदुवा थोरै पानीले ड्राई भुनेर मिसाउनुस्।'],
+          cook_en: ['Lady finger: dry thoroughly then chop — dry-cook on non-stick without oil, cover to steam through.', 'Paneer sabzi: brown paneer pieces on dry non-stick — dry-fry onion and ginger with a water splash, mix together.']
+        }
+      ]
+    ];
+
+    // ── EXERCISE DATA ─────────────────────────────────────────────────────────────
+    const EXERCISE = [
+      { // Monday
+        badge: 'active',
+        title: { ne: 'सोमबार — बिहानको हिँडाइ + माथिल्लो शरीर', en: 'Monday — Morning walk + upper body' },
+        note: { ne: 'कुल सक्रिय समय ~५० मिनेट। हिँडाइ बिहान खाली पेट गर्नुस् — बढी चर्बी घट्छ। पानी लिएर हिँड्नुस्।', en: 'Total active time ~50 min. Morning walk before eating burns more fat. Carry water.' },
+        links: [null, 'https://www.muscleandstrength.com/exercises/dumbbell-lateral-raise.html', 'https://www.muscleandstrength.com/exercises/dumbbell-lateral-raise.html', 'https://www.muscleandstrength.com/exercises/scapular-wall-slide', 'https://www.muscleandstrength.com/exercises/wall-push-up', null],
+        rows: [
+          { ne: ['बिहानको हिँडाइ (ढिलो गतिमा)', 'सामने हात उठाउने (seated)', 'छेउमा हात उठाउने (seated)', 'कुर्सीमा बसी काँध घुमाउने', 'भित्तामा पुश-अप (उभिएर)', 'कुर्सीमा बसी घाँटी स्ट्रेच'], en: ['Slow morning walk', 'Seated front arm raises', 'Seated lateral arm raises', 'Seated shoulder rolls', 'Wall push-ups (standing)', 'Seated neck stretch'] },
+          { ne: ['१ × २५–३० मिनेट', '३ × १२ रेप्स', '३ × १२ रेप्स', '३ × १० रेप्स दुवैतिर', '३ × १० रेप्स', '२ × ३० सेकेन्ड दुवैतिर'], en: ['1 × 25–30 min', '3 × 12 reps', '3 × 12 reps', '3 × 10 reps each way', '3 × 10 reps', '2 × 30 sec each side'] },
+          { ne: ['समतल बाटोमा, आरामदायी गतिमा, राम्रो जुत्ता लगाउनुस्', 'कुर्सीमा बसी हात सोझो अगाडि काँध उचाइसम्म उठाउनुस् — बिस्तारै झार्नुस्', 'उही स्थितिमा — हात दुवैतिर पखेटा जस्तो उठाउनुस्', 'काँध अगाडि र पछाडि घुमाउनुस् — बाथरोगको लागि उपयोगी', 'भित्ताबाट १–२ फिट टाढा उभिनुस् — हात छातीमा राखेर धकेल्नुस्', 'टाउको एकतिर बिस्तारै थिच्नुस् र राख्नुस् — कहिल्यै जबर्जस्ती नगर्नुस्'], en: ['Flat surface, comfortable pace, supportive footwear', 'Sit on chair, raise arms straight to shoulder height — lower slowly', 'Same position, raise arms out to sides like wings', 'Roll forward and backward — gentle mobility for rheumatology', 'Stand 1–2 feet from wall, hands at chest height, push and return', 'Tilt head gently to each side and hold — never force'] },
+        ]
+      },
+      { // Tuesday
+        badge: 'active',
+        title: { ne: 'मङ्गलबार — हिँडाइ + कोर र सास', en: 'Tuesday — Walk + core & breathing' },
+        note: { ne: 'गहिरो सास व्यायाम कोलेस्ट्रोल घटाउन विशेष उपयोगी छ — अक्सिजन सर्कुलेसन सुधार्छ।', en: 'Deep breathing exercises are especially beneficial for cholesterol patients — improves oxygen circulation.' },
+        links: [null, null, 'https://www.muscleandstrength.com/exercises/seated-barbell-twist.html', 'https://www.muscleandstrength.com/exercises/bodyweight-standing-calf-raise.html', null, null],
+        rows: [
+          { ne: ['बिहानको हिँडाइ', 'कुर्सीमा बसी पेट सास (diaphragm)', 'कुर्सीमा बसी शरीर घुमाउने', 'उभिएर खुट्टाको एडी उठाउने', 'कुर्सीमा बसी खुट्टाखुट्टाको गोलो घुमाउने', 'कुर्सीमा बसी पेट होल्ड'], en: ['Slow morning walk', 'Seated diaphragm breathing', 'Seated torso twist', 'Standing heel raises', 'Seated ankle rotations', 'Seated abdominal holds'] },
+          { ne: ['१ × २५–३० मिनेट', '३ × १० गहिरो सास', '३ × १० रेप्स दुवैतिर', '३ × १५ रेप्स', '२ × १५ रेप्स प्रत्येक खुट्टा', '३ × १० सेकेन्ड होल्ड'], en: ['1 × 25–30 min', '3 × 10 deep breaths', '3 × 10 reps each side', '3 × 15 reps', '2 × 15 reps each foot', '3 × 10 sec holds'] },
+          { ne: ['बीचमा विराम लिन सकिन्छ', 'नाकबाट ४ सेकेन्ड सास लिनुस् — २ सेकेन्ड रोक्नुस् — मुखबाट ६ सेकेन्ड फाल्नुस्', 'कुर्सीमा सोझो बसी — हात छातीमा — बिस्तारै घुमाउनुस्', 'कुर्सी समातेर एडी उठाउनुस् — बिस्तारै झार्नुस्', 'खुट्टा अलि उठाई गोलो घुमाउनुस् — रक्त सञ्चार राम्रो हुन्छ', 'सोझो बसेर पेट नाभिमा भित्र तान्नुस् र राख्नुस् — क्रन्च गर्नुपर्दैन'], en: ['Rest 2–3 min midway if needed', 'Inhale 4 sec through nose — hold 2 sec — exhale 6 sec through mouth', 'Sit upright, arms crossed on chest, twist slowly left and right', 'Hold chair back, rise on tiptoes and lower — controlled movement', 'Lift foot slightly and rotate ankle in full circles — improves circulation', 'Sit upright, gently pull belly button inward and hold — no crunch needed'] },
+        ]
+      },
+      { // Wednesday
+        badge: 'rest',
+        title: { ne: 'बुधबार — आराम + हल्का योग', en: 'Wednesday — Rest + gentle yoga' },
+        rest: {
+          ne: '🧘 <strong>हल्का रिकभरी दिन — कुनै कठिन व्यायाम र हिँडाइ अनिवार्य छैन।</strong><br><br>सुझाव (ऐच्छिक): बसेर १०–१५ मिनेट प्राणायाम — अनुलोम विलोम (नासाका वैकल्पिक श्वास) र भ्रामरी (गुञ्जन सास)। त्यसपछि १० मिनेट हल्का स्ट्रेच — बसेर ब्याक स्ट्रेच, अगाडि झुक्ने।<br><br>जोर्नी र मांसपेशी आराम दिनमा मर्मत हुन्छन् — यो दिन नजिस्काउनुस्। राति राम्रो निन्द्रा लिनुस्।',
+          en: '🧘 <strong>Gentle recovery day — no walk required, no strenuous exercise.</strong><br><br>Suggested (optional): 10–15 min seated Pranayama — Anulom Vilom (alternate nostril breathing) and Bhramari (humming breath). Then 10 min gentle seated stretching — seated cat-cow and forward fold.<br><br>Joints and muscles repair on rest days — this day is not wasted. Good sleep tonight matters greatly.'
+        }
+      },
+      { // Thursday
+        badge: 'active',
+        title: { ne: 'बिहीबार — हिँडाइ + माथिल्लो र पिठ्युँ', en: 'Thursday — Walk + upper & back strength' },
+        note: { ne: 'काँधमा दुखाइ छ भने काँध प्रेस छोड्नुस् — सास व्यायाम थप्नुस्। दुखाइमा कहिल्यै जबर्जस्ती नगर्नुस्।', en: 'If shoulder pain is present, skip shoulder press — add breathing exercises instead. Never push through pain.' },
+        links: [null, null, 'https://www.muscleandstrength.com/exercises/wall-push-up', 'https://www.muscleandstrength.com/exercises/seated-dumbbell-curl.html', 'https://www.muscleandstrength.com/exercises/bodyweight-standing-calf-raise.html', 'https://www.muscleandstrength.com/exercises/seated-dumbbell-press.html'],
+        rows: [
+          { ne: ['बिहानको हिँडाइ', 'कुर्सीमा बसी पिठ्युँ तन्काउने', 'भित्तामा पुश-अप (बढेको)', 'कुर्सीमा बसी हात कर्ल (पानीको बोतल)', 'उभिएर एडी उठाउने', 'कुर्सीमा बसी काँध प्रेस (बोतल)'], en: ['Slow morning walk', 'Seated back extensions', 'Wall push-ups (progressed)', 'Seated arm curls (water bottle)', 'Standing calf raises', 'Seated shoulder press (water bottle)'] },
+          { ne: ['१ × २५–३० मिनेट', '३ × १० रेप्स', '३ × १२ रेप्स', '३ × १२ रेप्स प्रत्येक हात', '३ × १५ रेप्स', '२ × १० रेप्स'], en: ['1 × 25–30 min', '3 × 10 reps', '3 × 12 reps', '3 × 12 reps each arm', '3 × 15 reps', '2 × 10 reps'] },
+          { ne: ['सोमबारभन्दा अलि लामो बाटो गर्नुस्', 'कुर्सीको किनारमा बस्नुस् — ढाडमा हात राखेर बिस्तारै पछाडि झुक्नुस् — २ सेकेन्ड — सोझो हुनुस्', 'सोमबारभन्दा २ रेप्स बढी', '५०० मिली पानी भरेको बोतल डम्बल जस्तो प्रयोग गर्नुस् — बिस्तारै उठाउनुस् र झार्नुस्', 'कुर्सी समातेर बिस्तारै एडी उठाउनुस्', 'बोतल दुवै हातमा राखी माथि उठाउनुस् र झार्नुस् — काँध नदुखेमा मात्र'], en: ['Try a slightly longer route than Monday', 'Sit on chair edge, hands on lower back, lean back slowly — hold 2 sec — return upright', '2 more reps than Monday — gradual progression', 'Use a full 500ml water bottle as dumbbell — raise slowly and lower slowly', 'Hold chair back, slow controlled movement', 'Press bottles overhead and lower — only if shoulder is pain-free'] },
+        ]
+      },
+      { // Friday
+        badge: 'active',
+        title: { ne: 'शुक्रबार — हिँडाइ + गतिशीलता र कोर', en: 'Friday — Walk + mobility & core' },
+        note: { ne: 'कलाई र औंला व्यायाम बाथरोग बिरामीका लागि विशेष महत्त्वपूर्ण छ — जोर्नीको गतिशीलता कायम राख्छ।', en: 'Wrist and finger exercises are especially important for rheumatology — maintaining joint range of motion prevents stiffness.' },
+        links: [null, 'https://www.muscleandstrength.com/exercises/horizontal-leg-raise.html', null, 'https://www.muscleandstrength.com/exercises/dumbbell-shrugs.html', null, null],
+        rows: [
+          { ne: ['बिहानको हिँडाइ', 'कुर्सीमा बसी खुट्टा सोझो उठाउने', 'कुर्सीमा बसी पेट सास', 'काँध उचाल्ने (shrugs)', 'कलाई घुमाउने र स्ट्रेच', 'औंला स्ट्रेच'], en: ['Slow morning walk', 'Seated straight leg raises', 'Seated diaphragm breathing', 'Shoulder shrugs', 'Wrist circles & stretches', 'Finger stretches'] },
+          { ne: ['१ × २५–३० मिनेट', '३ × १० रेप्स प्रत्येक खुट्टा', '३ × १० गहिरो सास', '३ × १२ रेप्स', '२ × ३० सेकेन्ड प्रत्येक कलाई', '२ × १० रेप्स'], en: ['1 × 25–30 min', '3 × 10 reps each leg', '3 × 10 deep breaths', '3 × 12 reps', '2 × 30 sec each wrist', '2 × 10 reps'] },
+          { ne: ['समतल बाटोमा मात्र — घुँडा दुखेमा तुरुन्त रोक्नुस्', 'कुर्सीमा सोझो बसी एउटा खुट्टा सोझो उठाउनुस् — २ सेकेन्ड राख्नुस् — झार्नुस् — घुँडा नभाँच्नुस्', 'मङ्गलबार जस्तै', 'दुवै काँध कान तिर उठाउनुस् — २ सेकेन्ड — छाड्नुस्', 'कलाई गोलो घुमाउनुस् — अगाडि र पछाडि थिच्नुस्', 'औंला फैलाउनुस् — राख्नुस् — बिस्तारै मुट्ठी पार्नुस् — सुजेको छ भने जबर्जस्ती नगर्नुस्'], en: ['Flat ground only — stop immediately if knee pain', 'Sit upright, lift one leg straight, hold 2 sec, lower — no knee bending needed — builds quad strength safely', 'Same technique as Tuesday', 'Raise both shoulders toward ears — hold 2 sec — release', 'Rotate wrists in full circles — then gently bend forward and back', 'Spread fingers wide, hold, gently close into a fist — never force if swollen'] },
+        ]
+      },
+      { // Saturday
+        badge: 'light',
+        title: { ne: 'शनिबार — हल्का हिँडाइ + प्राणायाम', en: 'Saturday — Light walk + pranayama' },
+        note: { ne: 'प्राणायाम दिनको जुनसुकै समयमा गर्न सकिन्छ — बिहान ओछ्यानमा बसेरै पनि हुन्छ। कोलेस्ट्रोल र बाथरोगी दुवैका लागि अत्यन्त उपयोगी।', en: 'Pranayama can be done any time of day — even from bed in the morning. Especially beneficial for cholesterol and rheumatology patients.' },
+        links: [null, null, null, null, null],
+        rows: [
+          { ne: ['हल्का छोटो हिँडाइ', 'बसेर अनुलोम विलोम (प्राणायाम)', 'बसेर भ्रामरी (गुञ्जन सास)', 'बसेर अगाडि झुक्ने स्ट्रेच', 'बसेर ब्याक स्ट्रेच (cat-cow)'], en: ['Gentle short walk', 'Seated Anulom Vilom (pranayama)', 'Seated Bhramari (humming breath)', 'Seated forward fold stretch', 'Seated cat-cow'] },
+          { ne: ['१ × १५–२० मिनेट', '२ × ५ मिनेट', '२ × ५ राउन्ड', '२ × ३० सेकेन्ड', '२ × १० रेप्स'], en: ['1 × 15–20 min', '2 × 5 min', '2 × 5 rounds', '2 × 30 sec', '2 × 10 reps'] },
+          { ne: ['सक्रिय रिकभरी — व्यायाम जस्तो नगरी हिँड्नुस्', 'दाहिने हातको बुढी औंलाले दाहिने नाक बन्द — बायाँबाट सास फाल्नुस् — बायाँबाट लिनुस् — बायाँ नाक बन्द — दाहिनेबाट फाल्नुस् — चयापचय र कोलेस्ट्रोलका लागि उत्कृष्ट', 'पूरा सास लिनुस् — कान दुवैतिर बुढी औंलाले बन्द गर्नुस् — सासफेर्दा मौरी जस्तो गुञ्जन गर्नुस् — तनाव घटाउँछ', 'कुर्सीमा बसी अगाडि झुक्नुस् — जबर्जस्ती नगर्नुस्', 'ढाड भाँच्नुस् (बिरालो) र गोलो पार्नुस् (गाई) — मेरुदण्डको गतिशीलता'], en: ['Short leisurely walk — enjoy it, not as exercise', 'Right thumb closes right nostril, exhale left, inhale left, close left, exhale right — excellent for metabolism and cholesterol', 'Inhale fully, plug ears with thumbs, hum like a bee on exhale — calming and stress-reducing', 'Lean gently forward from seated position — no force, just gravity', 'Arch back (cat), then round it (cow) — spinal mobility'] },
+        ]
+      },
+      { // Sunday
+        badge: 'rest',
+        title: { ne: 'आइतबार — पूर्ण आराम', en: 'Sunday — Full rest' },
+        rest: {
+          ne: '💤 <strong>पूर्ण आराम। कुनै व्यायाम छैन। कुनै हिँडाइको लक्ष्य छैन।</strong><br><br>घरको हल्का काम (रान्दा, घरभित्र हिँड्दा) ठीकै छ — तर जानाजान व्यायाम नगर्नुस्।<br><br>ध्यान दिनुस्: राम्रो निन्द्रा (राति १० बजेभित्र), दिनभर ८–१० गिलास तातो पानी, मानसिक शान्ति, र हप्ताभरको प्रगतिको समीक्षा। आराम दिनमा मांसपेशी र जोर्नी बन्छन् — यो खेर जाने दिन होइन।',
+          en: '💤 <strong>Complete rest. No exercise. No walking target.</strong><br><br>Light household movement (cooking, walking around the home) is fine — no intentional exercise.<br><br>Focus on: good sleep (by 10pm), 8–10 glasses of warm water, mental relaxation, and reflecting on the week\'s progress. Muscles and joints rebuild on rest days — rest days are when the real work happens.'
+        }
+      }
+    ];
+
+    // ── GUIDELINES DATA ───────────────────────────────────────────────────────────
+    const GUIDELINES = [
+      { icon: '💧', bg: '', title: { ne: 'पानी पिउने', en: 'Hydration' }, text: { ne: 'दिनमा ८–१० गिलास तातो वा कोठाको तापक्रमको पानी। बिहान उठेपछि २ गिलास। खाना खानु अघि तातो पानी — भोक कम हुन्छ। अदुवा, तुलसी चिया पनि गन्तिन्छ। चिसो पानी नखानुस्।', en: '8–10 glasses of warm or room-temperature water daily. 2 glasses on waking. Warm water before meals reduces appetite. Ginger and tulsi tea count toward intake. Avoid cold water.' } },
+      { icon: '🕐', bg: '', title: { ne: 'खाना खाने समय', en: 'Meal timing' }, text: { ne: '१० घण्टाको भित्र खानुस् (बिहान ७ – साँझ ७)। बेलुका ७:३०भित्र खाना खानुस्। बिहानको खाना नछोड्नुस् — ५० वर्षमा मेटाबोलिज्म यसैमा निर्भर छ। ३ मुख्य खाना + २ खाजा। राति ८ पछि केही नखानुस्।', en: 'Eat within a 10-hour window (7am–7pm). Dinner before 7:30pm. Never skip breakfast — metabolism at 50 depends on it. 3 main meals + 2 snacks. No food after 8pm.' } },
+      { icon: '🍳', bg: '', title: { ne: 'पकाउने तरिका', en: 'Cooking method' }, text: { ne: 'सबै तरकारी भाप, उमाल्नु, वा नन-स्टिक भाँडोमा ड्राई भुन्नुस्। तेल नहाल्नुस् — वा उहाँको भागमा दिनमा १ चम्चा मात्र। दाल कुकरमा पकाउनुस् — तेल नचाहिने।', en: 'All sabzis: steamed, boiled, or dry-cooked on non-stick pan. No oil, or max 1 tsp mustard oil per day total for her portion. Pressure-cook dals — no oil needed.' } },
+      { icon: '🌾', bg: '', title: { ne: 'कार्बोहाइड्रेट नियन्त्रण', en: 'Carb control' }, text: { ne: 'ब्राउन राइस सेतो भात भन्दा राम्रो। मात्रा = ८० ग्राम सुखा चामल (एक मुठ्ठी)। खाना बेलुका रोटी र दाल — भात नखानुस्। कोदो र मकैको पिठो प्राथमिकता दिनुस् — रगतमा चिनी कम बढाउँछ।', en: 'Brown rice over white. Portion = 80g dry rice (one fist). No rice at dinner — roti and dal instead. Prefer millet and maize flour — lower glycemic index.' } },
+      { icon: '❤️', bg: 'earth-bg', title: { ne: 'कोलेस्ट्रोल सुधार', en: 'Cholesterol support' }, text: { ne: 'दैनिक मेथी दाना (LDL र रगतको चिनी कम गर्छ)। दैनिक कच्चो लसुन २ कोया। अलसीको बीज (flaxseed) १ चम्चा पिसेर ढिँडोमा। कम चिल्लो दूध, दही मात्र। पनिर थोरै खानुस्।', en: 'Methi seeds daily (reduces LDL and blood sugar). Raw garlic 2 cloves daily. Ground flaxseed 1 tsp in porridge. Low-fat milk and curd only. Limit paneer to small amounts.' } },
+      { icon: '🌿', bg: 'earth-bg', title: { ne: 'बाथरोगको आहार', en: 'Rheumatology diet' }, text: { ne: 'दाल पकाउँदा अलि हल्दी। चियामा अदुवा। दैनिक २ कोया लसुन। अम्लिय खाना कम — टमाटर घटाउनुस्, कच्चो लेमन नखानुस्। प्रोटिन धेरै — दाल, सोया, टोफु — मांसपेशी जोगाउन।', en: 'A pinch of turmeric in dal daily. Ginger in tea. 2 cloves raw garlic daily. Minimize acidic foods — reduce tomato, avoid raw lemon. High protein — dal, soya, tofu — to preserve muscle.' } },
+      { icon: '🚶', bg: '', title: { ne: 'व्यायाम सुरक्षा', en: 'Exercise safety' }, text: { ne: 'जोर्नी दुखेमा तुरुन्त रोक्नुस् — कहिल्यै जबर्जस्ती नगर्नुस्। समतल बाटोमा मात्र हिँड्नुस्। स्क्वाट, लन्ज, भर्याङ चढ्ने नगर्नुस्। राम्रो जुत्ता — चप्पल वा सन्डल होइन।', en: 'Never push through joint pain — stop immediately. Walk on flat ground only. No squats, lunges, or stair-climbing exercises. Proper footwear — not slippers or sandals.' } },
+      { icon: '🌙', bg: '', title: { ne: 'निन्द्रा र रिकभरी', en: 'Sleep & recovery' }, text: { ne: '५० वर्षमा तौल घटाउन ७–८ घण्टाको निन्द्रा अनिवार्य छ — कम निन्द्राले कोर्टिसोल बढाउँछ, चर्बी घट्दैन। राति १० बजेभित्र सुत्नुस्। सुत्नु अघि ३० मिनेट मोबाइल बन्द।', en: '7–8 hours of sleep is essential for weight loss at 50 — poor sleep raises cortisol, blocks fat-burning. Sleep by 10pm. Avoid screens 30 min before bed.' } },
+      { icon: '📊', bg: 'earth-bg', title: { ne: 'प्रगति ट्र्याक', en: 'Progress tracking' }, text: { ne: 'हरेक सोमबार बिहान एकै समयमा तौल जाँच्नुस् — खाना खानु अघि। लक्ष्य: महिनामा ०.५–१ केजी — यो स्वस्थ र टिकाउ छ। प्रारम्भिक सफलता: राम्रो ऊर्जा, कम जोर्नी दुखाइ, राम्रो निन्द्रा।', en: 'Weigh every Monday morning at the same time, before eating. Target: 0.5–1 kg per month — realistic and safe. Early signs of success: better energy, reduced joint pain, improved sleep.' } },
+      {
+        icon: '🚫', bg: 'earth-bg', title: { ne: 'कडाइले बर्जित', en: 'Strictly avoid' }, avoid: {
+          ne: ['चिनी, गुड (धेरै मात्रा), मह', 'घ्यू, तेल, तलेको खाना (पकौडा, पुरी, समोसा)', 'अचार (धेरै नुन + तेल)', 'पूर्ण चिल्लो दूध, क्रिम, धेरै पनिर', 'सेतो भात धेरै', 'बिस्कुट, मिठाई, गुलियो', 'कोल्ड ड्रिंक, प्याकेज जुस, रक्सी'],
+          en: ['Sugar, jaggery (large amounts), honey', 'Ghee, oil, fried foods (pakoda, puri, samosa)', 'Pickles (high salt + oil)', 'Full-fat milk, cream, large portions of paneer', 'White rice in large portions', 'Biscuits, sweets, mithai', 'Cold drinks, packaged juice, alcohol']
+        }
+      }
+    ];
+
+    // ── RENDERER ──────────────────────────────────────────────────────────────────
+    let currentLang = 'ne';
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.getElementById('btn-ne').classList.toggle('active', lang === 'ne');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if (T[lang][key] !== undefined) el.innerHTML = T[lang][key];
+      });
+      renderDiet();
+      renderExercise();
+      renderGuidelines();
+      // reactivate current days
+      const dietActive = document.querySelector('#diet-day-nav .day-btn.active');
+      const exActive = document.querySelector('#ex-day-nav .day-btn.active');
+      const dIdx = dietActive ? parseInt(dietActive.dataset.idx) : 0;
+      const eIdx = exActive ? parseInt(exActive.dataset.idx) : 0;
+      showDay('diet', dIdx);
+      showDay('ex', eIdx);
+    }
+
+    function renderDiet() {
+      const t = T[currentLang];
+      // Day nav
+      const nav = document.getElementById('diet-day-nav');
+      nav.innerHTML = t.days.map((d, i) =>
+        `<button class="day-btn${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="showDay('diet',${i},this)">${d}</button>`
+      ).join('');
+
+      // Panels
+      const container = document.getElementById('diet-panels');
+      container.innerHTML = DIET.map((day, di) =>
+        `<div id="diet-p${di}" class="day-panel${di === 0 ? ' active' : ''}">` +
+        day.map((meal, mi) => {
+          const label = t.meal_labels[mi];
+          const icon = label.split(' ')[0];
+          const labelText = label.split(' ').slice(1).join(' ');
+          const calText = meal.cal ? (currentLang === 'ne' ? meal.cal.split('/')[0].trim() : meal.cal.split('/')[1].trim()) : '';
+          const tips = (currentLang === 'ne' ? meal.cook_ne : meal.cook_en);
+          return `<div class="meal-card">
+        <div class="meal-time">
+          <span class="meal-time-icon">${icon}</span>
+          <span class="meal-time-label">${labelText}</span>
+          <span class="meal-time-clock">${t.meal_clocks[mi]}</span>
+        </div>
+        <div class="meal-body">
+          <p class="meal-text">${currentLang === 'ne' ? meal.ne : meal.en}</p>
+          ${calText ? `<span class="meal-cal">${calText}</span>` : ''}
+        </div>
+        <div class="cook-tips">
+          <div class="cook-tips-label">${t.cook_label}</div>
+          ${tips.map(tip => `<div class="cook-tip-item">${tip}</div>`).join('')}
+        </div>
+      </div>`;
+        }).join('') +
+        `</div>`
+      ).join('');
+    }
+
+    function renderExercise() {
+      const t = T[currentLang];
+      const nav = document.getElementById('ex-day-nav');
+      nav.innerHTML = t.days.map((d, i) =>
+        `<button class="day-btn${i === 0 ? ' active' : ''}" data-idx="${i}" onclick="showDay('ex',${i},this)">${d}</button>`
+      ).join('');
+
+      const container = document.getElementById('ex-panels');
+      container.innerHTML = EXERCISE.map((day, di) => {
+        const badgeClass = day.badge === 'active' ? 'badge-active' : day.badge === 'light' ? 'badge-light' : 'badge-rest';
+        const badgeText = day.badge === 'active' ? t.badge_active : day.badge === 'light' ? t.badge_light : t.badge_rest;
+        if (day.rest) {
+          return `<div id="ex-p${di}" class="ex-panel${di === 0 ? ' active' : ''}">
+        <div class="ex-header"><h2>${day.title[currentLang]}</h2><span class="ex-type-badge ${badgeClass}">${badgeText}</span></div>
+        <div class="rest-note">${day.rest[currentLang]}</div>
+      </div>`;
+        }
+        const [names, sets, notes] = day.rows;
+        const links = day.links || [];
+        const demoLabel = currentLang === 'ne' ? '▶ डेमो हेर्नुस्' : '▶ View demo';
+        const rows = names[currentLang].map((n, i) => {
+          const link = links[i];
+          const linkCell = link
+            ? `<td><a class="ex-demo-link" href="${link}" target="_blank" rel="noopener">${demoLabel}</a></td>`
+            : `<td>—</td>`;
+          return `<tr><td>${n}</td><td>${sets[currentLang][i]}</td><td>${notes[currentLang][i]}</td>${linkCell}</tr>`;
+        }).join('');
+        return `<div id="ex-p${di}" class="ex-panel${di === 0 ? ' active' : ''}">
+      <div class="ex-header"><h2>${day.title[currentLang]}</h2><span class="ex-type-badge ${badgeClass}">${badgeText}</span></div>
+      <div class="ex-table-wrap">
+        <table class="ex-table">
+          <thead><tr>${t.ex_th.map(h => `<th>${h}</th>`).join('')}<th>${currentLang === 'ne' ? 'डेमो' : 'Demo'}</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div class="ex-note">${t.ex_note_prefix} ${day.note[currentLang]}</div>
+      </div>
+    </div>`;
+      }).join('');
+    }
+
+    function renderGuidelines() {
+      const container = document.getElementById('tips-grid');
+      container.innerHTML = GUIDELINES.map(g => {
+        if (g.avoid) {
+          return `<div class="tip-card"><div class="tip-icon ${g.bg}">${g.icon}</div>
+        <div class="tip-title">${g.title[currentLang]}</div>
+        <div class="tip-text">${(currentLang === 'ne' ? g.avoid.ne : g.avoid.en).map(i => `<div class="avoid-item">${i}</div>`).join('')}</div>
+      </div>`;
+        }
+        return `<div class="tip-card"><div class="tip-icon ${g.bg}">${g.icon}</div>
+      <div class="tip-title">${g.title[currentLang]}</div>
+      <div class="tip-text">${g.text[currentLang]}</div>
+    </div>`;
+      }).join('');
+    }
+
+    function showDay(prefix, idx, btnEl) {
+      document.querySelectorAll(`[id^="${prefix}-p"]`).forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById(`${prefix}-p${idx}`);
+      if (panel) panel.classList.add('active');
+      const navId = prefix === 'diet' ? 'diet-day-nav' : 'ex-day-nav';
+      document.querySelectorAll(`#${navId} .day-btn`).forEach(b => b.classList.remove('active'));
+      if (btnEl) { btnEl.classList.add('active'); }
+      else {
+        const btns = document.querySelectorAll(`#${navId} .day-btn`);
+        if (btns[idx]) btns[idx].classList.add('active');
+      }
+    }
+
+    function switchTab(id, el) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      el.classList.add('active');
+    }
+
+    // Init
+    renderDiet();
+    renderExercise();
+    renderGuidelines();
+
+    function setFs(size) {
+      document.documentElement.setAttribute('data-fs', size);
+      document.querySelectorAll('.fs-btn').forEach(b => b.classList.toggle('active', b.dataset.fs === size));
+    }
+  </script>
+</body>
+
+</html>
