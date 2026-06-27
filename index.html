@@ -130,7 +130,27 @@ body { font-family: 'DM Sans', sans-serif; background: var(--warm-white); color:
 .ex-demo-link:active { background: var(--earth); color: #fff; }
 .ex-note { background: var(--sage-light); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-size: calc(12px * var(--fs)); color: var(--sage); line-height: 1.5; margin-top: 8px; }
 
-/* ── GUIDELINES ── */
+/* ── READ ALOUD ── */
+.speak-btn { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border: 1.5px solid var(--sage-mid); border-radius: var(--pill-radius); background: #fff; color: var(--sage); font-size: calc(12px * var(--fs)); font-weight: 500; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: all .15s; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+.speak-btn:active, .speak-btn.speaking { background: var(--sage); color: #fff; border-color: var(--sage); }
+.speak-btn-icon { font-size: calc(15px * var(--fs)); line-height: 1; }
+.meal-speak-row { padding: 8px 14px 12px; display: flex; justify-content: flex-end; }
+.ex-card-speak { padding: 8px 14px 10px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+.tip-speak { margin-top: 8px; display: flex; justify-content: flex-end; }
+
+/* Floating now-playing bar */
+.tts-bar { position: fixed; bottom: 72px; left: 12px; right: 12px; z-index: 99; background: var(--sage); color: #fff; border-radius: 16px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 24px rgba(74,124,89,0.35); transform: translateY(calc(100% + 90px)); transition: transform .3s cubic-bezier(.34,1.56,.64,1); pointer-events: none; }
+.tts-bar.visible { transform: translateY(0); pointer-events: all; }
+.tts-bar-icon { font-size: 20px; flex-shrink: 0; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.tts-bar-text { flex: 1; font-size: calc(12px * var(--fs)); line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.tts-bar-stop { background: rgba(255,255,255,0.2); border: none; border-radius: 10px; color: #fff; width: 36px; height: 36px; font-size: 18px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+.tts-bar-stop:active { background: rgba(255,255,255,0.4); }
+
+@media (min-width: 640px) {
+  .tts-bar { bottom: auto; top: 80px; left: 50%; right: auto; width: 460px; transform: translateX(-50%) translateY(-160px); }
+  .tts-bar.visible { transform: translateX(-50%) translateY(0); }
+}
 .tips-grid { display: flex; flex-direction: column; gap: 10px; }
 .tip-card { background: #fff; border: 1px solid var(--border); border-radius: var(--card-radius); padding: 1rem; display: flex; gap: 12px; align-items: flex-start; }
 .tip-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
@@ -146,7 +166,7 @@ footer { display: none; }
 /* ── DESKTOP ── */
 @media (min-width: 640px) {
   .hero { padding: 3.5rem 2rem 2.5rem; }
-  .stats-row { grid-template-columns: repeat(4, 1fr); max-width: 855px; }
+  .stats-row { grid-template-columns: repeat(4, 1fr); max-width: 600px; }
   .stat-pill .val { font-size: calc(20px * var(--fs)); }
   .notice { margin: 1.5rem auto; max-width: 900px; }
   .bottom-nav { display: none; }
@@ -256,6 +276,13 @@ footer { display: none; }
 </div>
 
 <footer><span data-key="footer_text">आमाको स्वास्थ्य यात्राको लागि मायाले बनाइएको 🌿 · खाना वा औषधिको समयमा परिवर्तन गर्नु अघि सधैं डाक्टरसँग सल्लाह लिनुहोस्।</span></footer>
+
+<!-- TTS floating bar -->
+<div class="tts-bar" id="tts-bar">
+  <span class="tts-bar-icon">🔊</span>
+  <span class="tts-bar-text" id="tts-bar-text"></span>
+  <button class="tts-bar-stop" onclick="ttsStop()" title="Stop">⏹</button>
+</div>
 
 <script>
 // ── TRANSLATIONS ──────────────────────────────────────────────────────────────
@@ -720,35 +747,165 @@ const GUIDELINES = [
 // ── RENDERER ──────────────────────────────────────────────────────────────────
 let currentLang = 'ne';
 
-function setLang(lang) {
-  currentLang = lang;
-  document.getElementById('btn-ne').classList.toggle('active', lang === 'ne');
-  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-  document.querySelectorAll('[data-key]').forEach(el => {
-    const key = el.getAttribute('data-key');
-    if (T[lang][key] !== undefined) el.innerHTML = T[lang][key];
-  });
-  renderDiet();
-  renderExercise();
-  renderGuidelines();
-  // reactivate current days
-  const dietActive = document.querySelector('#diet-day-nav .day-btn.active');
-  const exActive = document.querySelector('#ex-day-nav .day-btn.active');
-  const dIdx = dietActive ? parseInt(dietActive.dataset.idx) : 0;
-  const eIdx = exActive ? parseInt(exActive.dataset.idx) : 0;
-  showDay('diet', dIdx);
-  showDay('ex', eIdx);
+// ── TTS ENGINE ────────────────────────────────────────────────────────────────
+let ttsActive = null;
+const ttsMap   = {};
+const ttsCache = {};  // phonetic cache
+
+function ttsBtnInner(state) {
+  if (state === 'loading') return `<span class="speak-btn-icon">⏳</span><span>${currentLang==='ne'?'लोड हुँदैछ…':'Loading…'}</span>`;
+  if (state === 'stop')    return `<span class="speak-btn-icon">⏹</span><span>${currentLang==='ne'?'रोक्नुस्':'Stop'}</span>`;
+  return currentLang === 'ne'
+    ? `<span class="speak-btn-icon">🔊</span><span>सुन्नुस्</span>`
+    : `<span class="speak-btn-icon">🔊</span><span>Listen</span>`;
 }
 
+function ttsStopped(btnEl) {
+  if (btnEl) { btnEl.classList.remove('speaking'); btnEl.innerHTML = ttsBtnInner(); }
+  ttsActive = null;
+  document.getElementById('tts-bar').classList.remove('visible');
+}
+
+function ttsStop() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  if (ttsActive) ttsStopped(ttsActive);
+}
+
+// Call Claude API to prepare text for TTS
+// Nepali → phonetic Hindi Devanagari (hi-IN voice reads it clearly)
+// English → cleaned, naturally punctuated prose for smooth TTS delivery
+async function ttsPrepare(text, lang) {
+  const prompt = lang === 'ne'
+    ? `Convert this Nepali Devanagari text into simple Hindi Devanagari that a Hindi TTS voice can pronounce clearly and that sounds like natural Nepali speech.
+Rules:
+- Keep words identical in Hindi and Nepali as-is
+- For Nepali-specific words, write the closest Hindi phonetic equivalent in Devanagari
+- Keep Devanagari digits as-is
+- Remove all symbols: +, ×, –, —, (, ), &, %, ~
+- Output ONLY the converted Devanagari text. No explanation. No English.
+
+Nepali text: ${text}`
+    : `Clean this English health-plan text for text-to-speech reading. Make it sound like a warm, clear spoken sentence.
+Rules:
+- Remove symbols: +, ×, –, —, %, ~, &
+- Expand abbreviations: "min" → "minutes", "reps" → "repetitions", "sec" → "seconds", "tsp" → "teaspoon", "tbsp" → "tablespoon", "g" after numbers → "grams", "ml" → "millilitres", "kcal" → "calories"
+- Replace "×" with "sets of", e.g. "3 × 12 reps" → "3 sets of 12 repetitions"
+- Write numbers as words where it reads more naturally (e.g. "1" → "one", but keep "80g" → "80 grams")
+- Keep the meaning exactly the same
+- Output ONLY the cleaned spoken text. No explanation.
+
+Text: ${text}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  const data = await res.json();
+  return (data.content?.[0]?.text || '').trim() || text;
+}
+
+function ttsSpeakNow(text, lang, btnEl) {
+  if (!window.speechSynthesis) { ttsStopped(btnEl); return; }
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.pitch = 1;
+
+  if (lang === 'ne') {
+    // Hindi voice — universally available, sounds close to Nepali
+    utt.lang = 'hi-IN';
+    utt.rate = 0.82;
+    const voices = window.speechSynthesis.getVoices();
+    const v = voices.find(v => v.lang === 'hi-IN') || voices.find(v => v.lang.startsWith('hi'));
+    if (v) utt.voice = v;
+  } else {
+    utt.lang = 'en-US';
+    utt.rate = 0.88;
+    const voices = window.speechSynthesis.getVoices();
+    // Prefer a natural-sounding female voice
+    const v = voices.find(v => v.lang === 'en-US' && /samantha|karen|moira|zira|google us/i.test(v.name))
+           || voices.find(v => v.lang === 'en-US')
+           || voices.find(v => v.lang.startsWith('en'));
+    if (v) utt.voice = v;
+  }
+
+  utt.onend = utt.onerror = () => ttsStopped(btnEl);
+  window.speechSynthesis.speak(utt);
+}
+
+async function ttsSpeak(id, btnEl) {
+  const text = ttsMap[id] || '';
+  if (!text) return;
+  if (ttsActive === btnEl) { ttsStop(); return; }
+  ttsStop();
+
+  ttsActive = btnEl;
+  btnEl.classList.add('speaking');
+
+  const bar     = document.getElementById('tts-bar');
+  const barText = document.getElementById('tts-bar-text');
+
+  // Show loading immediately
+  btnEl.innerHTML = ttsBtnInner('loading');
+  barText.textContent = currentLang === 'ne' ? 'तयार हुँदैछ…' : 'Preparing audio…';
+  bar.classList.add('visible');
+
+  // Check cache
+  let prepared = ttsCache[id];
+  if (!prepared) {
+    try {
+      prepared = await ttsPrepare(text, currentLang);
+      ttsCache[id] = prepared;
+    } catch(e) {
+      prepared = text; // fallback to raw text
+    }
+  }
+
+  // User may have cancelled while loading
+  if (ttsActive !== btnEl) return;
+
+  btnEl.innerHTML = ttsBtnInner('stop');
+  barText.textContent = text.length > 110 ? text.slice(0, 110) + '…' : text;
+  ttsSpeakNow(prepared, currentLang, btnEl);
+}
+
+function ttsMealText(meal) {
+  const main   = currentLang === 'ne' ? meal.ne : meal.en;
+  const tips   = (currentLang === 'ne' ? meal.cook_ne : meal.cook_en).join('। ');
+  const prefix = currentLang === 'ne' ? 'पकाउने तरिका: ' : 'Cooking tips: ';
+  return ttsClean(main + (tips ? '। ' + prefix + tips : ''));
+}
+
+function ttsClean(text) {
+  return text
+    .replace(/\+/g, ' ').replace(/×/g, ' ').replace(/~/g, ' ')
+    .replace(/&amp;/g, ' र ').replace(/&/g, ' र ')
+    .replace(/–/g, ' ').replace(/—/g, '। ')
+    .replace(/\(\s*[a-zA-Z -]+\s*\)/g, '')
+    .replace(/[<>]/g, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+function speakBtn(id) {
+  return `<button class="speak-btn" onclick="ttsSpeak('${id}',this)">${ttsBtnInner()}</button>`;
+}
+
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+
+// ── RENDERERS ─────────────────────────────────────────────────────────────────
 function renderDiet() {
   const t = T[currentLang];
-  // Day nav
   const nav = document.getElementById('diet-day-nav');
   nav.innerHTML = t.days.map((d,i) =>
     `<button class="day-btn${i===0?' active':''}" data-idx="${i}" onclick="showDay('diet',${i},this)">${d}</button>`
   ).join('');
 
-  // Panels
   const container = document.getElementById('diet-panels');
   container.innerHTML = DIET.map((day, di) =>
     `<div id="diet-p${di}" class="day-panel${di===0?' active':''}">`+
@@ -758,6 +915,8 @@ function renderDiet() {
       const labelText = label.split(' ').slice(1).join(' ');
       const calText = meal.cal ? (currentLang==='ne' ? meal.cal.split('/')[0].trim() : meal.cal.split('/')[1].trim()) : '';
       const tips = (currentLang==='ne' ? meal.cook_ne : meal.cook_en);
+      const sid = `m${di}_${mi}`;
+      ttsMap[sid] = ttsMealText(meal);
       return `<div class="meal-card">
         <div class="meal-time">
           <span class="meal-time-icon">${icon}</span>
@@ -772,6 +931,7 @@ function renderDiet() {
           <div class="cook-tips-label">${t.cook_label}</div>
           ${tips.map(tip => `<div class="cook-tip-item">${tip}</div>`).join('')}
         </div>
+        <div class="meal-speak-row">${speakBtn(sid)}</div>
       </div>`;
     }).join('')+
     `</div>`
@@ -790,9 +950,12 @@ function renderExercise() {
     const badgeClass = day.badge === 'active' ? 'badge-active' : day.badge === 'light' ? 'badge-light' : 'badge-rest';
     const badgeText = day.badge === 'active' ? t.badge_active : day.badge === 'light' ? t.badge_light : t.badge_rest;
     if (day.rest) {
+      const sid = `rest${di}`;
+      ttsMap[sid] = ttsClean(day.rest[currentLang].replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim());
       return `<div id="ex-p${di}" class="ex-panel${di===0?' active':''}">
         <div class="ex-header"><h2>${day.title[currentLang]}</h2><span class="ex-type-badge ${badgeClass}">${badgeText}</span></div>
         <div class="rest-note">${day.rest[currentLang]}</div>
+        <div class="meal-speak-row" style="margin-top:8px">${speakBtn(sid)}</div>
       </div>`;
     }
     const [names, sets, notes] = day.rows;
@@ -800,16 +963,19 @@ function renderExercise() {
     const demoLabel = currentLang === 'ne' ? '▶ डेमो हेर्नुस्' : '▶ View demo';
     const cards = names[currentLang].map((n,i) => {
       const link = links[i];
-      const linkHtml = link
-        ? `<div class="ex-card-link"><a class="ex-demo-link" href="${link}" target="_blank" rel="noopener">${demoLabel}</a></div>`
-        : '';
+      const linkHtml = link ? `<a class="ex-demo-link" href="${link}" target="_blank" rel="noopener">${demoLabel}</a>` : '';
+      const sid = `ex${di}_${i}`;
+      ttsMap[sid] = ttsClean(`${n}. ${sets[currentLang][i]}. ${notes[currentLang][i]}`);
       return `<div class="ex-card">
         <div class="ex-card-head">
           <span class="ex-card-name">${n}</span>
           <span class="ex-card-sets">${sets[currentLang][i]}</span>
         </div>
         <div class="ex-card-body">${notes[currentLang][i]}</div>
-        ${linkHtml}
+        <div class="ex-card-speak">
+          ${linkHtml}
+          <button class="speak-btn" style="margin-left:auto" onclick="ttsSpeak('${sid}',this)">${ttsBtnInner()}</button>
+        </div>
       </div>`;
     }).join('');
     return `<div id="ex-p${di}" class="ex-panel${di===0?' active':''}">
@@ -822,56 +988,72 @@ function renderExercise() {
 
 function renderGuidelines() {
   const container = document.getElementById('tips-grid');
-  container.innerHTML = GUIDELINES.map(g => {
+  container.innerHTML = GUIDELINES.map((g, gi) => {
+    let bodyHtml, spoken;
     if (g.avoid) {
-      return `<div class="tip-card">
-        <div class="tip-icon ${g.bg}">${g.icon}</div>
-        <div class="tip-body">
-          <div class="tip-title">${g.title[currentLang]}</div>
-          <div class="tip-text">${(currentLang==='ne'?g.avoid.ne:g.avoid.en).map(i=>`<div class="avoid-item">${i}</div>`).join('')}</div>
-        </div>
-      </div>`;
+      const items = currentLang === 'ne' ? g.avoid.ne : g.avoid.en;
+      bodyHtml = items.map(i => `<div class="avoid-item">${i}</div>`).join('');
+      spoken = g.title[currentLang] + '. ' + items.join('. ');
+    } else {
+      bodyHtml = g.text[currentLang];
+      spoken = g.title[currentLang] + '. ' + g.text[currentLang];
     }
+    const sid = `gl${gi}`;
+    ttsMap[sid] = ttsClean(spoken);
     return `<div class="tip-card">
       <div class="tip-icon ${g.bg}">${g.icon}</div>
       <div class="tip-body">
         <div class="tip-title">${g.title[currentLang]}</div>
-        <div class="tip-text">${g.text[currentLang]}</div>
+        <div class="tip-text">${bodyHtml}</div>
+        <div class="tip-speak">${speakBtn(sid)}</div>
       </div>
     </div>`;
   }).join('');
 }
 
+function setLang(lang) {
+  ttsStop();
+  // Clear cache — each language needs its own prepared text
+  Object.keys(ttsCache).forEach(k => delete ttsCache[k]);
+  currentLang = lang;
+  document.getElementById('btn-ne').classList.toggle('active', lang === 'ne');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.getAttribute('data-key');
+    if (T[lang][key] !== undefined) el.innerHTML = T[lang][key];
+  });
+  renderDiet();
+  renderExercise();
+  renderGuidelines();
+  const dietActive = document.querySelector('#diet-day-nav .day-btn.active');
+  const exActive = document.querySelector('#ex-day-nav .day-btn.active');
+  showDay('diet', dietActive ? parseInt(dietActive.dataset.idx) : 0);
+  showDay('ex', exActive ? parseInt(exActive.dataset.idx) : 0);
+}
+
 function showDay(prefix, idx, btnEl) {
+  ttsStop();
   document.querySelectorAll(`[id^="${prefix}-p"]`).forEach(p => p.classList.remove('active'));
   const panel = document.getElementById(`${prefix}-p${idx}`);
   if (panel) panel.classList.add('active');
   const navId = prefix === 'diet' ? 'diet-day-nav' : 'ex-day-nav';
   document.querySelectorAll(`#${navId} .day-btn`).forEach(b => b.classList.remove('active'));
   if (btnEl) { btnEl.classList.add('active'); }
-  else {
-    const btns = document.querySelectorAll(`#${navId} .day-btn`);
-    if (btns[idx]) btns[idx].classList.add('active');
-  }
-  // scroll active day button into view
+  else { const btns = document.querySelectorAll(`#${navId} .day-btn`); if (btns[idx]) btns[idx].classList.add('active'); }
   const activeBtn = document.querySelector(`#${navId} .day-btn.active`);
   if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
 
 function switchTab(id) {
+  ttsStop();
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  // sync top nav
   document.querySelectorAll('.main-tab').forEach(t => {
     if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(`'${id}'`)) t.classList.add('active');
   });
-  // sync bottom nav
-  document.querySelectorAll('.bottom-tab').forEach(t => {
-    if (t.dataset.tab === id) t.classList.add('active');
-  });
-  // scroll to top of content
+  document.querySelectorAll('.bottom-tab').forEach(t => { if (t.dataset.tab === id) t.classList.add('active'); });
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
